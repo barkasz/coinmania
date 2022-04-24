@@ -1,0 +1,198 @@
+swagger: "2.0"
+info:
+  description: "Coinmania REST API"
+  version: "1.0.0"
+  title: "Coinmania REST API"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+tags:
+  - name: "coin"
+    description: "Everything about your Coins"
+    externalDocs:
+      description: "Find out more"
+      url: "https://binance.com/"
+  - name: "info"
+    description: "Server info"
+    externalDocs:
+      description: "Find out more"
+      url: "https://binance.com/"
+  - name: "usercoin"
+    description: "User coin info"
+    externalDocs:
+      description: "Find out more"
+      url: "https://binance.com/"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /ping:
+    get:
+      tags:
+        - "info"
+      summary: Test Connectivity
+      description: |-
+        Test connectivity to the Rest API.
+      responses:
+        '200':
+          description: OK
+  /coinlist:
+    get:
+      tags:
+        - "coin"
+      summary: "Get all available coins"
+      description: "Get all available coins"
+      operationId: "findPetsByStatus"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "status"
+          in: "query"
+          description: "Status values that need to be considered for filter"
+          required: true
+          type: "array"
+          items:
+            type: "string"
+            enum:
+              - "available"
+              - "pending"
+              - "sold"
+            default: "available"
+          collectionFormat: "multi"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: "Invalid status value"
+
+  /coins/{userId}:
+    get:
+      tags:
+        - "usercoin"
+      summary: "Get user coins by userid"
+      description: "Returns a single list"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userId"
+          in: "path"
+          description: "ID of user to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "User not found"
+
+    post:
+      tags:
+        - "usercoin"
+      summary: "Add coin to the user by userid"
+      description: ""
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userId"
+          in: "path"
+          description: "ID of user that needs to be updated"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "name"
+          in: "formData"
+          description: "Coin short name"
+          required: true
+          type: "string"
+        - name: "photourl"
+          in: "formData"
+          description: "Coin picture URL"
+          required: false
+          type: "string"
+      responses:
+        "405":
+          description: "Invalid input"
+  /coins/{userId}/{coinName}:
+    delete:
+      tags:
+        - "usercoin"
+      summary: "Deletes a coin from a user by coin name"
+      description: ""
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userId"
+          in: "path"
+          description: "User id"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "coinName"
+          in: "path"
+          description: "Coin name to delete"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Coin not found"
+  /coins/{userId}/rate/{coinName}:
+    post:
+      tags:
+        - "usercoin"
+      summary: "Rate coin by userid and coin name"
+      description: ""
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "userId"
+          in: "path"
+          description: "ID of user that needs to be updated"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "coinName"
+          in: "path"
+          description: "Coin short name"
+          required: true
+          type: "string"
+        - name: "rate"
+          in: "formData"
+          description: "Rate coin"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "405":
+          description: "Invalid input"
+definitions:
+  Coin:
+    type: "object"
+    required:
+      - "name"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+        example: "BTC"
+      photoUrl:
+        type: "string"
+      rate:
+        type: "integer"
+        format: "int64"
+    xml:
+      name: "Coin"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
